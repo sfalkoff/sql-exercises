@@ -8,6 +8,7 @@ import pickle
 import sqlite3
 
 # File to store the student's answers
+questions = {}
 ANSWER_FILE = 'answers.sql'
 answers = {}
 
@@ -20,12 +21,12 @@ def show_problem(problem, problem_num):
 def intro():
     print """\
 
-Hackbright Academy - Introductory SQL Exercise 
+Hackbright Academy - Introductory SQL Exercise
 ----------------------------------------------
 
-You will write a series of SQL queries accomplishing different tasks. 
-Each problem will include a link to a SQLZoo tutorial that illustrates 
-the concepts required, as well as a link to syntax reference for the 
+You will write a series of SQL queries accomplishing different tasks.
+Each problem will include a link to a SQLZoo tutorial that illustrates
+the concepts required, as well as a link to syntax reference for the
 kind of query you'll be doing.
 
 Type '.help' without quotes for a list of the available commands.
@@ -36,7 +37,7 @@ your queries. If you get very stuck each problem includes a hint on how to
 formulate your query, accessed by typing '.hint'.
 """
     print ""
-    
+
 
 def repl(cursor, problem, problem_num):
     raw_input("[ Press Enter to continue ]")
@@ -50,7 +51,7 @@ def repl(cursor, problem, problem_num):
             sys.exit(0)
 
         line.strip()
-        
+
         if not line:
             continue
 
@@ -94,7 +95,7 @@ def show_success(line):
 def execute(line, problem, cursor):
     try:
         cursor.execute(line)
-        results = cursor.fetchmany() 
+        results = cursor.fetchmany()
     except sqlite3.OperationalError, e:
         print "There was a problem with your sql syntax:\n\n\t%s\n"%e
         return
@@ -107,7 +108,7 @@ def execute(line, problem, cursor):
 
 def tables(cursor):
     query = """select name from sqlite_master where type='table';"""
-    try: 
+    try:
         cursor.execute(query)
         results = cursor.fetchall()
     except sqlite3.OperationalError, e:
@@ -143,7 +144,7 @@ def schema(tokens, cursor):
 
     table_name = tokens[1]
     query = """select sql from sqlite_master where type='table' and name=?""";
-    try: 
+    try:
         cursor.execute(query, (table_name,))
         results = cursor.fetchall()
     except sqlite3.OperationalError, e:
@@ -160,6 +161,16 @@ def schema(tokens, cursor):
 def load_problems():
     with open("problem_set.pickle") as f:
         return pickle.load(f)
+
+
+def parse_questions(problems):
+    for p, problem in enumerate(problems):
+      instructions = problem['instruction'].split('\n')
+      for i, lines in enumerate(instructions):
+        if lines.split(" ")[0] == "Task:":
+            questions[p+1] = " ".join(instructions[i:]).strip()
+    return questions
+
 
 # if an answers file already exists, load it
 def load_answers():
@@ -186,16 +197,13 @@ def load_answers():
                 answers.setdefault(probnum, '')
 
             # Check for SQL statement
-            elif line != '' and probnum > 0:
+            elif line != '' and probnum > 0 and line.split(' ')[0] != 'Task:':
                 if answers.get(probnum) != '':
                     answers[probnum] += "\n";
                 answers[probnum] += line;
 
-            # print "read: ", line
             line = f.readline()
 
-    # print "answers"
-    # print answers
 
 
 # Save student answers to a file
@@ -203,6 +211,7 @@ def save_answers():
     with open(ANSWER_FILE, 'w') as f:
         for key in sorted(answers.keys()):
             f.write("-- Problem %s\n" % key)
+            f.write("%s\n" % questions.get(key, ''))
             f.write("%s\n\n" % answers.get(key, ''))
 
 
@@ -210,11 +219,12 @@ def main():
     # Connect to SQLite
     cursor = sql_problem.connect()
     problems = load_problems()
+    questions = parse_questions(problems)
     load_answers()
-    
-    # Display Into Message
+
+    # Display Intro Message
     intro()
-    
+
     for idx, problem in enumerate(problems):
         repl(cursor, problem, idx+1)
 
