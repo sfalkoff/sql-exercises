@@ -2,7 +2,7 @@
 (dp1
 S'instruction'
 p2
-S"The 'SELECT' is the basic query. We use it to extract information from a\ntable. There are a number of clauses to a select statement. Right now, we'll\nconcern ourself with just two: the column list and the table you are querying.\n\nThe format of the basic select statement is\n\n    SELECT <column list> FROM <table name>;\n\nFor now, we can use the wildcard '*' (without quotes) to select all columns\nfrom a given table.\n\nExamples: http://sqlzoo.net/wiki/SELECT_from_WORLD_Tutorial -- 1\n\nTask: Write a query that shows all the information about all the salespeople in\nthe database. Use a basic SELECT query.\n"
+S"The 'select' is the basic query. We use it to extract information from a\ntable. There are a number of clauses to a select statement. Right now, we'll\nconcern ourself with just two: the column list and the table you are querying.\n\nThe format of the basic select statement is\n\n    SELECT <column list> FROM <table name>;\n\nFor now, we can use the wildcard '*' (without quotes) to select all columns\nfrom a given table.\n\nExamples: http://sqlzoo.net/wiki/SELECT_from_WORLD_Tutorial -- 1\n\nTask: Write a query that shows all the information about all the salespeople in\nthe database. Use a basic SELECT query.\n"
 p3
 sS'soln_hash'
 p4
@@ -224,7 +224,7 @@ S"Select the id, status, and order_total columns from the 'orders' table joined 
 p91
 sa(dp92
 g2
-S"We're going to practice more joins. The question we'll eventually answer is,\n'can you show me all the details of the melons attached to a particular order?'\nWe will, but first, we need to understand how our data is organized. We have a\ntable called 'order_items'. This table includes information about all the items\nin a given order. You can think of this table as representing a 'shopping cart'\nof an order.\n\nWe'll start by querying for just half of the information we want: which melons\nwere present in a given order.\n\nTask: Write a query that shows all the melons, quantity, price, all columns\nthat were attached to order #2725.\n"
+S"We're going to practice more joins. The question we'll eventually answer is,\n'can you show me all the details of the melons attached to a particular order?'\nWe will, but first, we need to understand how our data is organized. We have a\ntable called 'order_items'. This table includes information about all the items\nin a given order. You can think of this table as representing a 'shopping cart'\nof an order.\n\nWe'll start by querying for just half of the information we want: which melons\nwere present in a given order.\n\nTask: Write a query that shows all columns that were attached to order #2725.\n"
 p93
 sg4
 S'f6ec6d557943f0084927ba5f2ba27f12'
