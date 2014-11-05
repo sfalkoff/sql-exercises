@@ -2,7 +2,6 @@
 
 import os
 import sql_problem
-import readline
 import sys
 import pickle
 import sqlite3
@@ -39,7 +38,10 @@ formulate your query, accessed by typing '.hint'.
     print ""
 
 
-def repl(cursor, problem, problem_num):
+def repl(cursor, problem, problem_num, answered):
+    if problem_num in answered:
+        print "Already answered question %s" % problem_num
+        return
     raw_input("[ Press Enter to continue ]")
     show_problem(problem, problem_num)
 
@@ -175,8 +177,9 @@ def parse_questions(problems):
 # if an answers file already exists, load it
 def load_answers():
     if not os.path.isfile(ANSWER_FILE):
-        return
+        return []
 
+    answered = []
     with open(ANSWER_FILE, 'r') as f:
         probnum = 0
         query = ''
@@ -201,10 +204,10 @@ def load_answers():
                 if answers.get(probnum) != '':
                     answers[probnum] += "\n";
                 answers[probnum] += line;
+                answered.append(probnum)
 
             line = f.readline()
-
-
+    return answered
 
 # Save student answers to a file
 def save_answers():
@@ -220,13 +223,15 @@ def main():
     cursor = sql_problem.connect()
     problems = load_problems()
     questions = parse_questions(problems)
-    load_answers()
-
+    answered = load_answers()
+    if len(answered) == 26:
+        print "You've already answered all the questions. Remove answers.sql to redo the exercise."
+        return
     # Display Intro Message
     intro()
 
     for idx, problem in enumerate(problems):
-        repl(cursor, problem, idx+1)
+        repl(cursor, problem, idx+1, answered)
 
 if __name__ == "__main__":
     main()
